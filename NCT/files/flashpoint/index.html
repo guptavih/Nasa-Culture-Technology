@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Flashpoint: combustion science for crew safety</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Public+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f3f2;--panel:#fff;--ink:#16211f;--mut:#5b6866;--line:#d3dbd8;--hot:#d9480f;--hotbg:#fde8dc;--cool:#0b6e6e;--coolbg:#dcf0ee;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10181a;--panel:#18232a;--ink:#e8efed;--mut:#9fb0ac;--line:#2c3c42;--hot:#ff8a4c;--hotbg:#3a2417;--cool:#5fd0c8;--coolbg:#12302f}}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Public Sans",system-ui,sans-serif}
+header{padding:28px 20px 8px;max-width:1180px;margin:auto}
+h1{font:800 clamp(30px,5vw,52px)/1.02 Fraunces,Georgia,serif;margin:0 0 8px}
+header p{max-width:64ch;color:var(--mut);margin:0}
+main{max-width:1180px;margin:auto;padding:16px 20px 40px;display:grid;grid-template-columns:290px 1fr;gap:20px}
+@media(max-width:860px){main{grid-template-columns:1fr}}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;align-self:start}
+h2{font:600 16px Fraunces,Georgia,serif;margin:16px 0 8px}aside h2:first-child{margin-top:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:transparent;color:var(--ink);padding:5px 11px;border-radius:99px;font:inherit;font-size:13px;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip.link{border:0;color:var(--mut);text-decoration:underline;padding:5px 2px}
+:focus-visible{outline:3px solid var(--hot);outline-offset:2px}
+.bar{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin-bottom:10px}
+.key{display:flex;gap:14px;font-size:13px;color:var(--mut);flex-wrap:wrap}.key b{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.go{background:var(--hot);color:#fff;border:0;border-radius:6px;padding:8px 14px;font:600 14px inherit;cursor:pointer}.go:disabled{opacity:.5}
+.list{display:grid;gap:8px}
+.card{background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--line);border-radius:10px;padding:12px 14px;text-align:left;width:100%;color:inherit;font:inherit;cursor:pointer}
+.card.best{border-color:var(--hot);border-left-color:var(--hot);background:var(--hotbg)}
+.card.part{border-color:var(--cool);border-left-color:var(--cool);background:var(--coolbg)}
+.card.dim{opacity:.55}
+.nm{font-weight:600}.sub{font-size:13px;color:var(--mut)}
+.badge{float:right;font-size:12px;font-weight:600;margin-left:8px}.best .badge{color:var(--hot)}.part .badge{color:var(--cool)}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}.tag{font-size:12px;border:1px solid var(--line);padding:1px 8px;border-radius:4px;color:var(--mut)}
+.tag.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.empty{padding:20px;color:var(--mut)}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(460px,100%);background:var(--panel);border-left:1px solid var(--line);box-shadow:-8px 0 30px #0003;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);z-index:20}
+#drawer[hidden]{display:none}
+.dh{display:flex;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.dh h3{margin:0;font:600 18px Fraunces,Georgia,serif}.x{background:none;border:0;color:var(--ink);font-size:24px;cursor:pointer;line-height:1}
+.db{overflow:auto;padding:12px 16px;flex:1}
+.rec h4{margin:10px 0 2px;font-size:12px;color:var(--hot);text-transform:uppercase;letter-spacing:.04em}.rec p{margin:0;font-size:14px}
+details{margin-bottom:12px}summary{cursor:pointer;font-weight:600;font-size:14px}
+.msg{margin:8px 0;padding:8px 11px;border-radius:8px;white-space:pre-wrap;font-size:14.5px}
+.msg.u{background:var(--bg);margin-left:30px}.msg.a{background:var(--coolbg)}
+.df{border-top:1px solid var(--line);padding:10px 16px}
+.df textarea{width:100%;min-height:54px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit;resize:vertical;margin-bottom:6px}
+.note{font-size:12.5px;color:var(--mut);margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+</style></head><body>
+<header><h1>Flashpoint</h1>
+<p>Pick the tags that describe your problem. Investigations that match them rise to the top. Open any one and ask the AI about it directly.</p></header>
+<main>
+<aside>
+<div id="groups"></div>
+<button class="chip link" id="clr">Clear all tags</button>
+<p class="note">Investigations follow NASA’s Combustion Science page. Tags are my reading of its public descriptions. Check them against the NASA PSI records before citing.</p>
+</aside>
+<section>
+<div class="bar"><div class="key" id="key"></div><button class="go" id="askall" hidden>Ask AI about these results</button></div>
+<div class="list" id="list"></div>
+</section>
+</main>
+<div id="drawer" role="dialog" hidden aria-label="Ask AI">
+<div class="dh"><h3 id="dt"></h3><button class="x" id="dx" aria-label="Close">×</button></div>
+<div class="db" id="dbody"></div>
+<div class="df"><div class="chips" id="sug" style="margin-bottom:8px"></div>
+<textarea id="dq" aria-label="Your question" placeholder="Ask anything about this"></textarea><button class="go" id="dgo">Ask</button></div>
+</div>
+<script>
+const U="https://www.nasa.gov/glenn/glenn-expertise-space-exploration/physical-sciences-program/combustion-science/";
+const ENV=["Spacecraft","Space station","Lunar base","Martian base","Rover"];
+const GROUPS=[["Fire safety",["Prevention","Detection","Suppression"]],["Location",ENV],["Predictive modeling",["Flammability limits","Flame spread","Ignition and extinction","Smoke and soot"]]];
+// aff = relevance to ENV (>=4 becomes a Location tag; ISS-only work defaults to Space station)
+const RAW=[
+{n:"FM2: Flammability of Materials on the Moon",t:"First combustion experiment on another world",st:"Current",fs:["Prevention"],md:["Flame spread","Flammability limits"],aff:[1,1,5,3,4],
+ why:"Burns materials at lunar gravity (1/6 g), the condition a Moon base or lunar rover will face. It extends ground (1 g) and ISS (0 g) results.",
+ model:"Burning behavior at lunar gravity to anchor models between existing 0 g and 1 g data.",
+ ctl:"Shows whether material approvals and alarm rules written from station data hold on the surface.",
+ earth:"Mostly model validation; little direct terrestrial use."},
+{n:"SoFIE: Solid Fuel Ignition and Extinction",t:"Ignition and fire growth of solids in microgravity",st:"Current",fs:["Prevention","Suppression"],md:["Ignition and extinction","Flame spread"],aff:[5,5,3,3,4],
+ why:"NASA screens flight materials with a 1 g flame test (NASA-STD-6001) that some researchers think is not conservative in low gravity. SoFIE tests that doubt.",
+ model:"Ignition and extinction data for solids in microgravity to calibrate flammability predictions.",
+ ctl:"Supports review of material selection rules and fire safety techniques for crewed spacecraft.",
+ earth:"Improves flammability testing of materials in low-flow, enclosed spaces."},
+{n:"FLARE: Flammability Limits at Reduced-g",t:"Linking ground and microgravity flammability limits",st:"Current",fs:["Prevention"],md:["Flammability limits"],aff:[4,4,4,4,4],
+ why:"Aims to estimate a material’s flammability limit in microgravity from ground tests, so every candidate material need not fly.",
+ model:"A method for correlating normal-gravity and microgravity limits, built by an international team (JAXA, NASA, ESA, CNES, DLR, universities).",
+ ctl:"Cheaper, faster screening of habitat materials.",
+ earth:"A way to predict limits of materials from small-scale tests."},
+{n:"Saffire",t:"Spacecraft Fire Safety Demonstration",st:"Archived",fs:["Prevention","Detection"],md:["Flame spread"],aff:[5,4,3,3,3],
+ why:"NASA lists crew safety as the top priority. Saffire demonstrates spacecraft fire behavior. The NASA page gives only a one-line summary.",
+ model:"Large-scale burn data for validating fire models.",
+ ctl:"Informs fire detection and response planning for vehicles.",
+ earth:"Validation data for enclosed-space fire codes."},
+{n:"BASS: Burning and Suppression of Solids",t:"Burning and extinction of many fuel samples",st:"Archived",fs:["Prevention","Suppression"],md:["Ignition and extinction","Flame spread"],aff:[4,5,4,4,4],
+ why:"Examines burning and extinction for a wide variety of solid fuel samples, giving a broad base of material behavior.",
+ model:"Burn and extinction characteristics across fuels for flammability maps.",
+ ctl:"Shows conditions where fires die, which informs ventilation and atmosphere limits.",
+ earth:"Better flammability screening for low-flow spaces."},
+{n:"SAME: Smoke Aerosol Measurement",t:"What spacecraft smoke looks like",st:"Archived",fs:["Detection"],md:["Smoke and soot"],aff:[5,5,3,3,4],
+ why:"Detectors must catch different smokes: hydrocarbon fuels make soot, while plastics make droplets of recondensed polymer.",
+ model:"Particle data for smoke transport and detector response models.",
+ ctl:"Direct input to spacecraft smoke detector design.",
+ earth:"Detector particle-size knowledge can reduce missed or false alarms on Earth."},
+{n:"DAFT: Dust and Aerosol Measurement Feasibility Test",t:"Proving the smoke sensor works in microgravity",st:"Archived",fs:["Detection"],md:["Smoke and soot"],aff:[4,5,2,2,3],
+ why:"Checked that a modified P-Trak particle counter works in microgravity, a prerequisite for SAME.",
+ model:"Instrument performance, not fire physics.",
+ ctl:"Confirms measurement tools for detector testing.",
+ earth:"Limited."},
+{n:"FLEX: Flame Extinguishment Experiment",t:"Inert-gas suppression and limiting oxygen",st:"Archived",fs:["Suppression"],md:["Flammability limits","Ignition and extinction"],aff:[4,5,3,3,4],
+ why:"Quantifies how well inert gases suppress flames in microgravity and gives a conservative limiting oxygen index for steady burning.",
+ model:"Limiting oxygen values and suppressant effectiveness for extinction models.",
+ ctl:"Direct input to choosing suppressants and cabin oxygen limits.",
+ earth:"Suppressant data apply to gaseous fire suppression systems."},
+{n:"ACME: Advanced Combustion via Microgravity",t:"Efficiency and low-emission combustion",st:"Archived",fs:["Prevention"],md:["Smoke and soot"],aff:[1,3,1,1,1],
+ why:"Targets efficiency and lower pollutant emission in practical combustion, so it is mostly an Earth benefit.",
+ model:"Fundamental flame data for combustion models.",
+ ctl:"Indirect.",
+ earth:"Cleaner, more efficient burners and engines."},
+{n:"SLICE: Structure and Liftoff in Combustion",t:"Coflow laminar diffusion flames",st:"Archived",fs:[],md:["Smoke and soot"],aff:[1,2,1,1,1],
+ why:"Coflow laminar flames are a well-modeled configuration, so results test numerical models cleanly.",
+ model:"High-quality data for validating detailed flame simulations.",
+ ctl:"Indirect.",
+ earth:"Improves predictive combustion codes."},
+{n:"SPICE: Smoke Point in Co-flow",t:"Stability and extinction of jet flames",st:"Archived",fs:[],md:["Smoke and soot","Ignition and extinction"],aff:[2,3,1,1,1],
+ why:"Studies what controls stability and extinction of jet diffusion flames, and when a flame starts to smoke.",
+ model:"Soot onset and extinction data.",
+ ctl:"Indirect: informs smoke production by fires.",
+ earth:"Soot and emissions control."}
+];
+const DATA=RAW.map(d=>{let loc=ENV.filter((_,i)=>d.aff[i]>=4);if(!loc.length)loc=["Space station"];
+ return {...d,loc,tags:[...d.fs,...loc,...d.md]}});
+const sel=new Set(),chats={};let SAMPLE=null,cur=null;
+const $=s=>document.querySelector(s);
+function setup(){
+ $("#groups").innerHTML=GROUPS.map(([g,ts])=>`<h2>${g}</h2><div class="chips">${ts.map(t=>`<button class="chip" aria-pressed="false" data-t="${t}">${t}</button>`).join("")}</div>`).join("");
+ $("#groups").onclick=e=>{const b=e.target.closest("[data-t]");if(!b)return;const t=b.dataset.t;sel.has(t)?sel.delete(t):sel.add(t);b.setAttribute("aria-pressed",sel.has(t));render()};
+ $("#clr").onclick=()=>{sel.clear();document.querySelectorAll("[data-t]").forEach(b=>b.setAttribute("aria-pressed","false"));render()};
+ $("#list").onclick=e=>{const b=e.target.closest("[data-i]");if(b)openPanel(+b.dataset.i)};
+ $("#askall").onclick=()=>openPanel("*");$("#dx").onclick=()=>{$("#drawer").hidden=true;cur=null};
+ $("#dgo").onclick=send;$("#sug").onclick=e=>{if(e.target.matches(".chip")){$("#dq").value=e.target.textContent;send()}};
+ render()}
+function results(){const r=DATA.map((d,i)=>({d,i,m:d.tags.filter(t=>sel.has(t))}));
+ const max=Math.max(0,...r.map(x=>x.m.length));
+ r.forEach(x=>x.c=!sel.size?"":!x.m.length?"dim":x.m.length===max?"best":"part");
+ return r.sort((a,b)=>b.m.length-a.m.length)}
+function render(){
+ const r=results();
+ $("#key").innerHTML=sel.size?`<span><b style="background:var(--hot)"></b>Best match</span><span><b style="background:var(--cool)"></b>Partial match</span><span><b style="background:var(--line)"></b>No match</span>`:"Select tags to rank the investigations.";
+ $("#list").innerHTML=r.map(x=>`<button class="card ${x.c}" data-i="${x.i}">
+  ${x.c==="best"?'<span class="badge">Best match</span>':x.c==="part"?'<span class="badge">Partial match</span>':""}
+  <span class="nm">${x.d.n}</span><br><span class="sub">${x.d.t} (${x.d.st})</span>
+  <span class="tags">${x.d.tags.map(t=>`<span class="tag ${sel.has(t)?"on":""}">${t}</span>`).join("")}</span></button>`).join("");
+ $("#askall").hidden=!SAMPLE;$("#askall").textContent=sel.size?"Ask AI about matching results":"Ask AI about all investigations"}
+const RULES="You are a fire safety analyst for crewed space habitats. Answer ONLY from the records below. If they do not cover the question, say so and name what is missing. Never invent data values, dates or results. Name the investigations you rely on. Be concise (under 180 words) and plain.";
+const fld=({n,t,st,tags,why,model,ctl,earth})=>({n,t,st,tags,why,model,ctl,earth});
+function context(){if(cur==="*"){const r=results().filter(x=>!sel.size||x.m.length);return `Records for ${sel.size?"investigations matching tags "+[...sel].join(", "):"all investigations"}:\n`+JSON.stringify(r.map(x=>fld(x.d)))}
+ return "Record the user has open:\n"+JSON.stringify(fld(DATA[cur]))}
+function openPanel(k){cur=k;const d=k==="*"?null:DATA[k];chats[k]=chats[k]||[];
+ $("#dt").textContent=d?d.n:(sel.size?"Matching results":"All investigations");
+ $("#dbody").innerHTML=(d?`<details class="rec" open><summary>About this investigation</summary>
+  <h4>Why it matters</h4><p>${d.why}</p><h4>Data for models</h4><p>${d.model}</p><h4>Safety controls</h4><p>${d.ctl}</p><h4>On Earth</h4><p>${d.earth}</p>
+  <p style="margin-top:8px"><a href="${U}" target="_blank" rel="noopener">NASA Combustion Science</a></p></details>`:"")+'<div id="chat"></div>';
+ $("#sug").innerHTML=(d?["Summarize this for a habitat designer","What would a fire modeler take from this?","What is still unknown?"]:["Which should I read first?","What gaps remain across these?","Compare how they help detection"]).map(x=>`<button class="chip">${x}</button>`).join("");
+ drawChat();$("#drawer").hidden=false;$("#dq").focus()}
+function drawChat(){const c=$("#chat");c.innerHTML="";chats[cur].forEach(m=>{const e=document.createElement("div");e.className="msg "+(m.role==="user"?"u":"a");e.textContent=m.content;c.appendChild(e)});$("#dbody").scrollTop=1e9}
+async function send(){const q=$("#dq").value.trim();if(!q||!SAMPLE)return;const k=cur,h=chats[k];
+ $("#dq").value="";h.push({role:"user",content:q});h.push({role:"assistant",content:"Thinking..."});drawChat();$("#dgo").disabled=true;
+ const msgs=h.slice(0,-1).map((m,i)=>i===0?{role:"user",content:RULES+"\n\n"+context()+"\n\nQuestion: "+m.content}:m);
+ try{const r=await SAMPLE(msgs,{cache:false,onText:({text})=>{h[h.length-1].content=text;if(cur===k)drawChat()}});h[h.length-1].content=r.text}
+ catch(e){h[h.length-1].content=e&&e.code==="rate_limited"?"Too many requests. Wait a moment and try again.":"The analyst could not answer. Try again."}
+ $("#dgo").disabled=false;if(cur===k)drawChat()}
+SAMPLE=async(msgs)=>{
+ const r=await fetch("/api/ask",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({messages:msgs})});
+ if(r.status===429)throw {code:"rate_limited"};
+ if(!r.ok)throw {code:"error"};
+ return await r.json()};
+setup();
+</script></body></html>
