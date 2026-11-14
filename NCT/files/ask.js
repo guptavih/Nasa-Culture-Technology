@@ -9,24 +9,32 @@ export default async function handler(req, res) {
     content: String(m.content || "").slice(0, 30000)
   }));
   if (clean[clean.length - 1].role !== "user") return res.status(400).json({ text: "Bad request" });
+
+  // Groq uses the OpenAI-compatible format: system prompt goes inside messages
+  const messages = [
+    {
+      role: "system",
+      content: "You answer only questions about combustion science and fire safety for crewed space habitats, using the records the user supplies. Decline anything else in one sentence."
+    },
+    ...clean
+  ];
+
   try {
-    const r = await fetch("https://api.anthropic.com/v1/messages", {
+    const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01"
+        "authorization": `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: "claude-sonnet-5-5",
+        model: "openai/gpt-oss-20b",
         max_tokens: 500,
-        system: "You answer only questions about combustion science and fire safety for crewed space habitats, using the records the user supplies. Decline anything else in one sentence.",
-        messages: clean
+        messages
       })
     });
     if (r.status === 429) return res.status(429).json({ text: "Busy" });
     const data = await r.json();
-    const text = (data.content || []).map(c => c.text || "").join("") || "No answer.";
+    const text = data.choices?.[0]?.message?.content || "No answer.";
     res.status(200).json({ text });
   } catch (e) {
     res.status(500).json({ text: "Server error" });
