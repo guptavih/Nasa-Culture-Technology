@@ -9,20 +9,27 @@ export default async function handler(req, res) {
     content: String(m.content || "").slice(0, 30000)
   }));
   if (clean[clean.length - 1].role !== "user") return res.status(400).json({ text: "Bad request" });
+
+  // Groq uses the OpenAI-compatible format: system prompt goes inside messages
+  const messages = [
+    {
+      role: "system",
+      content: "You answer only questions about combustion science and fire safety for crewed space habitats, using the records the user supplies. Decline anything else in one sentence."
+    },
+    ...clean
+  ];
+
   try {
     const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        authorization: `Bearer ${process.env.GROQ_API_KEY}`
+        "authorization": `Bearer ${process.env.GROQ_API_KEY}`
       },
       body: JSON.stringify({
-        model: "llama-3.3-70b-versatile",
+        model: "openai/gpt-oss-20b",
         max_tokens: 500,
-        messages: [
-          { role: "system", content: "You answer only questions about combustion science and fire safety for crewed space habitats, using the records the user supplies. Decline anything else in one sentence." },
-          ...clean
-        ]
+        messages
       })
     });
     if (r.status === 429) return res.status(429).json({ text: "Busy" });
